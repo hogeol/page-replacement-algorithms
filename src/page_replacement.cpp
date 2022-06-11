@@ -84,6 +84,7 @@ void PageReplacement::NruAlgorithm()
   CounterSetting(mpage_container.front());
   mcounter.rfault_number++;
   mpage_container.pop();
+  std::vector<Virtualpage>::iterator delete_iter=physic_memory.begin();
   while(mpage_container.size()){
     CounterSetting(mpage_container.front());
     for(physic_iter = physic_memory.begin(); physic_iter != physic_memory.end(); physic_iter++){
@@ -96,13 +97,16 @@ void PageReplacement::NruAlgorithm()
         if(mpage_container.front().vwrite == 1){
           (*physic_iter).vwrite = 1;
         }
+        Virtualpage tmp_page=(*physic_iter);
+        delete_iter = physic_iter;
+        physic_memory.erase(delete_iter);
+        physic_memory.push_back(tmp_page);
         mpage_container.pop();
         is_hit = true;
         break;
       }
     }
     /*page fault*/
-    std::vector<Virtualpage>::iterator delete_iter=physic_memory.begin();
     if(is_hit == false){
       mcounter.rfault_number++;
       /*if memory size iv over frame number*/
